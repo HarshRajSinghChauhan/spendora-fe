@@ -216,8 +216,15 @@ export default function TransactionsPage() {
         return list;
     }, [rawTransactions, search, category, minAmount, maxAmount, sortBy, sortOrder]);
 
-    // Summary calculations based on current list
+    // Summary calculations (prefer backend full-dataset aggregation if present)
     const summaryStats = useMemo(() => {
+        if (transactionsResponse?.summary) {
+            return {
+                income: Number(transactionsResponse.summary.total_income || 0),
+                expense: Number(transactionsResponse.summary.total_expense || 0),
+                net: Number(transactionsResponse.summary.total_remain || 0),
+            };
+        }
         let income = 0;
         let expense = 0;
         rawTransactions.forEach((tx) => {
@@ -233,7 +240,7 @@ export default function TransactionsPage() {
             expense,
             net: income - expense,
         };
-    }, [rawTransactions]);
+    }, [transactionsResponse?.summary, rawTransactions]);
 
     // Handle Period Preset Change
     const handlePeriodPresetChange = useCallback((newPreset) => {
