@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import React, { useState, useEffect } from "react";
 import { X, Tag, ArrowUpCircle, ArrowDownCircle, AlertCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 
@@ -15,45 +14,53 @@ export default function CategoryModal({
 }) {
     const isEdit = Boolean(initialData?.id);
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        setValue,
-        reset,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            name: "",
-            type: "EXPENSE",
-        },
-    });
+    const [name, setName] = useState("");
+    const [type, setType] = useState("EXPENSE");
+    const [error, setError] = useState("");
 
-    const selectedType = useWatch({ control, name: "type" });
-
-    // Populate on open / edit
+    // Initialize/reset form state whenever modal opens or initialData changes
     useEffect(() => {
         if (isOpen) {
-            if (initialData) {
-                reset({
-                    name: initialData.name || "",
-                    type: initialData.type || "EXPENSE",
-                });
-            } else {
-                reset({
-                    name: "",
-                    type: "EXPENSE",
-                });
-            }
+            setName(initialData?.name || "");
+            setType(initialData?.type || "EXPENSE");
+            setError("");
         }
-    }, [isOpen, initialData, reset]);
+    }, [isOpen, initialData]);
 
     if (!isOpen) return null;
 
-    const handleFormSubmit = async (values) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const trimmed = name.trim();
+        if (!trimmed || trimmed.length < 2) {
+            setError("Category name is required (2–100 characters)");
+            return;
+        }
+
+        if (trimmed.length > 100) {
+            setError("Category name must not exceed 100 characters");
+            return;
+        }
+
+        // Case-insensitive duplicate check within same type
+        const duplicate = existingCategories.find(
+            (c) =>
+                c.type === type &&
+                c.name &&
+                c.name.trim().toLowerCase() === trimmed.toLowerCase() &&
+                c.id !== initialData?.id
+        );
+
+        if (duplicate) {
+            setError(`A category named "${trimmed}" already exists for ${type.toLowerCase()}s.`);
+            return;
+        }
+
+        setError("");
         await onSubmit({
-            name: values.name.trim(),
-            type: values.type,
+            name: trimmed,
+            type,
         });
     };
 
@@ -88,7 +95,7 @@ export default function CategoryModal({
                 </div>
 
                 {/* Form Body */}
-                <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-5">
+                <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     {/* Category Type Segmented Switch */}
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -97,9 +104,12 @@ export default function CategoryModal({
                         <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl">
                             <button
                                 type="button"
-                                onClick={() => setValue("type", "EXPENSE")}
+                                onClick={() => {
+                                    setType("EXPENSE");
+                                    if (error) setError("");
+                                }}
                                 className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
-                                    selectedType === "EXPENSE"
+                                    type === "EXPENSE"
                                         ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
                                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                                 }`}
@@ -109,9 +119,12 @@ export default function CategoryModal({
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setValue("type", "INCOME")}
+                                onClick={() => {
+                                    setType("INCOME");
+                                    if (error) setError("");
+                                }}
                                 className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
-                                    selectedType === "INCOME"
+                                    type === "INCOME"
                                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
                                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                                 }`}
@@ -139,45 +152,22 @@ export default function CategoryModal({
                                 type="text"
                                 placeholder="e.g., Dining Out, Streaming, Consulting"
                                 maxLength={100}
-                                {...register("name", {
-                                    required: "Category name is required (2–100 characters)",
-                                    minLength: {
-                                        value: 2,
-                                        message: "Category name is required (2–100 characters)",
-                                    },
-                                    maxLength: {
-                                        value: 100,
-                                        message: "Category name is required (2–100 characters)",
-                                    },
-                                    validate: (value) => {
-                                        const trimmed = value.trim();
-                                        if (trimmed.length < 2) {
-                                            return "Category name is required (2–100 characters)";
-                                        }
-                                        // Case-insensitive duplicate check within same type
-                                        const duplicate = existingCategories.find(
-                                            (c) =>
-                                                c.type === selectedType &&
-                                                c.name.toLowerCase() === trimmed.toLowerCase() &&
-                                                c.id !== initialData?.id
-                                        );
-                                        if (duplicate) {
-                                            return `A category named "${trimmed}" already exists for ${selectedType.toLowerCase()}s.`;
-                                        }
-                                        return true;
-                                    },
-                                })}
+                                value={name}
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                    if (error) setError("");
+                                }}
                                 className={`w-full text-sm rounded-xl border bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 py-2.5 pl-10 pr-4 transition-all outline-none ${
-                                    errors.name
+                                    error
                                         ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
                                         : "border-slate-200 dark:border-slate-800 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
                                 }`}
                             />
                         </div>
-                        {errors.name && (
+                        {error && (
                             <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
                                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                                <span>{errors.name.message}</span>
+                                <span>{error}</span>
                             </p>
                         )}
                     </div>
