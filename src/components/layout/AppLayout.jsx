@@ -7,19 +7,16 @@ import Header from "./Header";
 
 export default function AppLayout({ children, onQuickAddClick }) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
-    const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
-
-    // Restore desktop collapsed preference from localStorage
-    useEffect(() => {
-        try {
-            const savedState = localStorage.getItem("spendora_sidebar_collapsed");
-            if (savedState !== null) {
-                setIsDesktopCollapsed(savedState === "true");
+    const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
+        if (typeof window !== "undefined") {
+            try {
+                return localStorage.getItem("spendora_sidebar_collapsed") === "true";
+            } catch {
+                return false;
             }
-        } catch {
-            // Ignore storage access errors
         }
-    }, []);
+        return false;
+    });
 
     // Toggle and persist desktop collapsed state
     const handleToggleCollapse = () => {
