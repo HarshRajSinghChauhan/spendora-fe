@@ -67,8 +67,8 @@ export default function AuthLayout({
                                 </span>
                             </div>
                             <div className="flex items-baseline justify-between">
-                                <span className="text-xl font-bold text-white">$4,850.00</span>
-                                <span className="text-xs text-slate-400">of $6,000.00</span>
+                                <span className="text-xl font-bold text-white">₹4,850.00</span>
+                                <span className="text-xs text-slate-400">of ₹6,000.00</span>
                             </div>
                             <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                                 <div className="bg-gradient-to-r from-emerald-400 to-teal-300 h-full w-[80%] rounded-full" />
