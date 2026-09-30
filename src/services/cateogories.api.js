@@ -32,6 +32,17 @@ export const categoriesApi = {
     },
 
     /**
+     * Update a category by ID
+     * @param {string} id - Category UUID
+     * @param {Object} data - { name, type }
+     * @returns {Promise<Object>}
+     */
+    updateCategory: async (id, data) => {
+        const response = await api.put(`/categories/${id}`, data);
+        return response.data;
+    },
+
+    /**
      * Delete a category by ID
      * @param {string} id - Category UUID
      * @returns {Promise<Object>}
@@ -39,6 +50,10 @@ export const categoriesApi = {
     deleteCategoryById: async (id) => {
         const response = await api.delete(`/categories/${id}`);
         return response.data;
+    },
+
+    deleteCategory: async (id) => {
+        return categoriesApi.deleteCategoryById(id);
     },
 };
 
