@@ -240,7 +240,7 @@ export default function TransactionsPage() {
             expense,
             net: income - expense,
         };
-    }, [transactionsResponse?.summary, rawTransactions]);
+    }, [transactionsResponse, rawTransactions]);
 
     // Handle Period Preset Change
     const handlePeriodPresetChange = useCallback((newPreset) => {

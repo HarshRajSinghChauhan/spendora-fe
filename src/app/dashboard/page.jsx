@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import {
     TrendingUp,
     TrendingDown,
@@ -11,9 +13,31 @@ import {
 } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/context/AuthContext";
+import budgetsApi from "@/services/budgets.api";
 
 export default function DashboardPage() {
     const { user } = useAuth();
+
+    const { data: budgetsResponse } = useQuery({
+        queryKey: ["budgets", { active: true, limit: 100 }],
+        queryFn: async () => {
+            const res = await budgetsApi.getAllBudgets({ active: true, limit: 100 });
+            return res?.data || res;
+        },
+        staleTime: 60 * 1000,
+    });
+
+    const budgets = useMemo(
+        () => budgetsResponse?.budgets || [],
+        [budgetsResponse?.budgets]
+    );
+    const summary = budgetsResponse?.summary || { totalBudgeted: 0, totalSpent: 0 };
+
+    const totalBudgetCount = budgets.length;
+    const hasExceeded = budgets.some((b) => b.isExceeded);
+    const budgetUsagePct = summary.totalBudgeted > 0
+        ? Math.round((summary.totalSpent / summary.totalBudgeted) * 100)
+        : 0;
 
     return (
         <AppLayout>
@@ -85,20 +109,34 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Savings & Budgets */}
-                    <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <Link
+                        href="/budgets"
+                        className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 hover:border-emerald-500/50 hover:shadow-md transition-all group cursor-pointer block"
+                    >
                         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                             <span>Budget Usage</span>
-                            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+                            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform">
                                 <PiggyBank className="w-4 h-4" />
                             </div>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white">0%</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                Limits Healthy
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {budgetUsagePct}%
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center justify-between">
+                                <span className={hasExceeded ? "text-rose-500 font-semibold" : ""}>
+                                    {hasExceeded
+                                        ? "Over Budget Detected"
+                                        : totalBudgetCount > 0
+                                        ? `${totalBudgetCount} Active ${totalBudgetCount === 1 ? "Cap" : "Caps"}`
+                                        : "No active caps"}
+                                </span>
+                                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold group-hover:underline">
+                                    Manage &rarr;
+                                </span>
                             </p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Account Details Box */}

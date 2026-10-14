@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, Tag, ArrowUpCircle, ArrowDownCircle, AlertCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function CategoryModal({
-    isOpen,
+function CategoryModalDialog({
     onClose,
     initialData = null,
     existingCategories = [],
@@ -14,20 +13,9 @@ export default function CategoryModal({
 }) {
     const isEdit = Boolean(initialData?.id);
 
-    const [name, setName] = useState("");
-    const [type, setType] = useState("EXPENSE");
+    const [name, setName] = useState(() => initialData?.name || "");
+    const [type, setType] = useState(() => initialData?.type || "EXPENSE");
     const [error, setError] = useState("");
-
-    // Initialize/reset form state whenever modal opens or initialData changes
-    useEffect(() => {
-        if (isOpen) {
-            setName(initialData?.name || "");
-            setType(initialData?.type || "EXPENSE");
-            setError("");
-        }
-    }, [isOpen, initialData]);
-
-    if (!isOpen) return null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -193,5 +181,27 @@ export default function CategoryModal({
                 </form>
             </div>
         </div>
+    );
+}
+
+export default function CategoryModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    existingCategories = [],
+    onSubmit,
+    isLoading = false,
+}) {
+    if (!isOpen) return null;
+
+    return (
+        <CategoryModalDialog
+            key={initialData?.id || "create-category-dialog"}
+            onClose={onClose}
+            initialData={initialData}
+            existingCategories={existingCategories}
+            onSubmit={onSubmit}
+            isLoading={isLoading}
+        />
     );
 }
