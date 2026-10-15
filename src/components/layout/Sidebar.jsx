@@ -19,6 +19,7 @@ import {
     ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export const NAV_ITEMS = [
     {
@@ -110,15 +111,15 @@ export default function Sidebar({
                         className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 select-none
                             ${
                                 active
-                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm"
-                                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                                    ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 font-semibold shadow-xs border border-emerald-100/70 dark:border-transparent"
+                                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
                             }
                             ${isCollapsed && !isMobile ? "justify-center px-2" : ""}
                         `}
                     >
                         {/* Active vertical pill indicator */}
                         {active && (
-                            <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-emerald-500 rounded-r-full" />
+                            <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-emerald-600 dark:bg-emerald-500 rounded-r-full" />
                         )}
 
                         <Icon
@@ -202,14 +203,14 @@ export default function Sidebar({
                         className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 select-none
                             ${
                                 active
-                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold"
-                                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                                    ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 font-semibold shadow-xs border border-emerald-100/70 dark:border-transparent"
+                                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
                             }
                             ${isCollapsed && !isMobile ? "justify-center px-2" : ""}
                         `}
                     >
                         {active && (
-                            <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-emerald-500 rounded-r-full" />
+                            <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-emerald-600 dark:bg-emerald-500 rounded-r-full" />
                         )}
 
                         <Icon className="w-5 h-5 shrink-0 text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300" />
@@ -226,18 +227,29 @@ export default function Sidebar({
                     </Link>
                 );
             })}
+
+            {/* Theme Toggle inside Sidebar Settings */}
+            <div className="pt-1.5">
+                {(!isCollapsed || isMobile) ? (
+                    <ThemeToggle variant="row" />
+                ) : (
+                    <div className="flex justify-center py-1">
+                        <ThemeToggle variant="icon" />
+                    </div>
+                )}
+            </div>
         </div>
     );
 
     const renderUserProfile = (isMobile = false) => (
         <div
-            className={`border-t border-slate-200 dark:border-slate-800 pt-3 pb-2 flex items-center
+            className={`border-t border-slate-200/80 dark:border-slate-800 pt-3 pb-2 flex items-center
                 ${isCollapsed && !isMobile ? "flex-col gap-2 justify-center px-1" : "justify-between px-3 gap-3"}
             `}
         >
             <div className="flex items-center gap-3 min-w-0">
                 {/* User avatar badge */}
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm shadow-emerald-500/20">
+                <div className="w-9 h-9 rounded-xl bg-emerald-800 dark:bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm shadow-emerald-800/20">
                     {getInitials(user?.name, user?.email)}
                 </div>
 
@@ -301,10 +313,10 @@ export default function Sidebar({
                                 onClick={onCloseMobile}
                                 className="flex items-center gap-2.5"
                             >
-                                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+                                <div className="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm shadow-emerald-600/20">
                                     <Wallet className="w-4 h-4 stroke-[2.2]" />
                                 </div>
-                                <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
+                                <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
                                     Spendora
                                 </span>
                             </Link>
@@ -346,7 +358,7 @@ export default function Sidebar({
             {/* 2. DESKTOP PERMANENT / COLLAPSIBLE SIDEBAR (>= lg screens) */}
             {/* ========================================================= */}
             <aside
-                className={`hidden lg:flex flex-col justify-between sticky top-0 h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out z-20 shrink-0
+                className={`hidden lg:flex flex-col justify-between sticky top-0 h-screen bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 transition-all duration-300 ease-in-out z-20 shrink-0
                     ${isCollapsed ? "w-20 p-3" : "w-64 p-4"}
                 `}
             >
@@ -363,11 +375,11 @@ export default function Sidebar({
                                 ${isCollapsed ? "justify-center" : ""}
                             `}
                         >
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm shadow-emerald-600/20 group-hover:scale-105 transition-transform">
                                 <Wallet className="w-5 h-5 stroke-[2.2]" />
                             </div>
                             {!isCollapsed && (
-                                <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
+                                <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
                                     Spendora
                                 </span>
                             )}
