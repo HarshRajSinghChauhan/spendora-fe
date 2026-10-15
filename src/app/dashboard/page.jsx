@@ -138,33 +138,6 @@ const DashboardPage = () => {
                         </div>
                     </Link>
                 </div>
-
-                {/* Account Details Box */}
-                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
-                        Active Session Details
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-400 block mb-1">User Identifier / Name</span>
-                            <span className="font-semibold text-slate-900 dark:text-white">
-                                {user?.name || "Not provided"}
-                            </span>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-400 block mb-1">Email Address</span>
-                            <span className="font-semibold text-slate-900 dark:text-white truncate block">
-                                {user?.email || "Unknown"}
-                            </span>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-400 block mb-1">Role / Access Level</span>
-                            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                                {user?.role || "USER"}
-                            </span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </AppLayout>
     );
