@@ -40,13 +40,13 @@ const getCategoryIcon = (name, type) => {
     return Tag;
 };
 
-export default function CategoryCard({
+const CategoryCard = ({
     category,
     onEdit,
     onDelete,
-}) {
-    const isGlobal = Boolean(category.isGlobal);
-    const isIncome = category.type === "INCOME";
+}) => {
+    const isGlobal = Boolean(category?.isGlobal);
+    const isIncome = category?.type === "INCOME";
 
     return (
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4 group">
@@ -110,7 +110,7 @@ export default function CategoryCard({
                         <div className="flex items-center gap-1">
                             <button
                                 type="button"
-                                onClick={() => onEdit(category)}
+                                onClick={() => onEdit?.(category)}
                                 className="p-1.5 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
                                 title="Edit Category"
                             >
@@ -118,7 +118,7 @@ export default function CategoryCard({
                             </button>
                             <button
                                 type="button"
-                                onClick={() => onDelete(category)}
+                                onClick={() => onDelete?.(category)}
                                 className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                                 title="Delete Category"
                             >
@@ -138,4 +138,6 @@ export default function CategoryCard({
             </div>
         </div>
     );
-}
+};
+
+export default CategoryCard;

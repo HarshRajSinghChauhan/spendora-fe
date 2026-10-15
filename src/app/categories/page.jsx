@@ -22,7 +22,7 @@ import CategoryCard from "@/components/categories/CategoryCard";
 import CategoryModal from "@/components/categories/CategoryModal";
 import DeleteCategoryModal from "@/components/categories/DeleteCategoryModal";
 
-export default function CategoriesPage() {
+const CategoriesPage = () => {
     const queryClient = useQueryClient();
 
     // Tab state: "ALL" | "EXPENSE" | "INCOME"
@@ -96,15 +96,15 @@ export default function CategoriesPage() {
 
     // 3. Tab & Search Filtering
     const filteredCategories = useMemo(() => {
-        let list = allCategories.filter((c) => !c.isDisabled);
+        let list = allCategories.filter((c) => !c?.isDisabled);
 
         if (selectedTab !== "ALL") {
-            list = list.filter((c) => c.type === selectedTab);
+            list = list.filter((c) => c?.type === selectedTab);
         }
 
         if (searchQuery.trim()) {
             const term = searchQuery.toLowerCase().trim();
-            list = list.filter((c) => c.name && c.name.toLowerCase().includes(term));
+            list = list.filter((c) => c?.name?.toLowerCase()?.includes(term));
         }
 
         return list;
@@ -464,4 +464,6 @@ export default function CategoriesPage() {
             </div>
         </AppLayout>
     );
-}
+};
+
+export default CategoriesPage;

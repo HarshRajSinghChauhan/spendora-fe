@@ -1,5 +1,7 @@
 import LoginPage from "@/app/login/page";
 
-export default function AuthLoginPage() {
+const AuthLoginPage = () => {
     return <LoginPage />;
-}
+};
+
+export default AuthLoginPage;

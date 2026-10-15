@@ -4,13 +4,13 @@ import React, { useState, useEffect } from "react";
 import { X, Tag, ArrowUpCircle, ArrowDownCircle, AlertCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-function CategoryModalDialog({
+const CategoryModalDialog = ({
     onClose,
     initialData = null,
     existingCategories = [],
     onSubmit,
     isLoading = false,
-}) {
+}) => {
     const isEdit = Boolean(initialData?.id);
 
     const [name, setName] = useState(() => initialData?.name || "");
@@ -20,7 +20,7 @@ function CategoryModalDialog({
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const trimmed = name.trim();
+        const trimmed = name?.trim?.() || "";
         if (!trimmed || trimmed.length < 2) {
             setError("Category name is required (2–100 characters)");
             return;
@@ -32,12 +32,12 @@ function CategoryModalDialog({
         }
 
         // Case-insensitive duplicate check within same type
-        const duplicate = existingCategories.find(
+        const duplicate = existingCategories?.find(
             (c) =>
-                c.type === type &&
-                c.name &&
-                c.name.trim().toLowerCase() === trimmed.toLowerCase() &&
-                c.id !== initialData?.id
+                c?.type === type &&
+                c?.name &&
+                c?.name?.trim?.()?.toLowerCase?.() === trimmed.toLowerCase() &&
+                c?.id !== initialData?.id
         );
 
         if (duplicate) {
@@ -46,7 +46,7 @@ function CategoryModalDialog({
         }
 
         setError("");
-        await onSubmit({
+        await onSubmit?.({
             name: trimmed,
             type,
         });
@@ -182,16 +182,16 @@ function CategoryModalDialog({
             </div>
         </div>
     );
-}
+};
 
-export default function CategoryModal({
+const CategoryModal = ({
     isOpen,
     onClose,
     initialData = null,
     existingCategories = [],
     onSubmit,
     isLoading = false,
-}) {
+}) => {
     if (!isOpen) return null;
 
     return (
@@ -204,4 +204,6 @@ export default function CategoryModal({
             isLoading={isLoading}
         />
     );
-}
+};
+
+export default CategoryModal;

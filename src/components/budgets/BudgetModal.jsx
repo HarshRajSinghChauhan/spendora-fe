@@ -18,19 +18,19 @@ const toInputDateFormat = (dateStr) => {
     if (!dateStr) return "";
     try {
         const d = new Date(dateStr);
-        return d.toISOString().slice(0, 10);
+        return d?.toISOString?.()?.slice(0, 10) || "";
     } catch {
         return "";
     }
 };
 
-function BudgetModalDialog({
+const BudgetModalDialog = ({
     onClose,
     initialData = null,
     categories = [],
     onSubmit,
     isLoading = false,
-}) {
+}) => {
     const isEdit = Boolean(initialData?.id);
 
     // Form states initialized directly from initialData
@@ -54,7 +54,7 @@ function BudgetModalDialog({
     const [error, setError] = useState("");
 
     // Filter categories to only EXPENSE types
-    const expenseCategories = categories.filter((c) => c.type === "EXPENSE" && !c.isDisabled);
+    const expenseCategories = categories?.filter((c) => c?.type === "EXPENSE" && !c?.isDisabled) || [];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -94,7 +94,7 @@ function BudgetModalDialog({
         }
 
         try {
-            await onSubmit(payload);
+            await onSubmit?.(payload);
         } catch (err) {
             const msg =
                 err?.response?.data?.message ||
@@ -338,16 +338,16 @@ function BudgetModalDialog({
             </div>
         </div>
     );
-}
+};
 
-export default function BudgetModal({
+const BudgetModal = ({
     isOpen,
     onClose,
     initialData = null,
     categories = [],
     onSubmit,
     isLoading = false,
-}) {
+}) => {
     if (!isOpen) return null;
 
     return (
@@ -360,4 +360,6 @@ export default function BudgetModal({
             isLoading={isLoading}
         />
     );
-}
+};
+
+export default BudgetModal;

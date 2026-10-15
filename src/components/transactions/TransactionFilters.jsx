@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function TransactionFilters({
+const TransactionFilters = ({
     search,
     onSearchChange,
     type,
@@ -31,7 +31,7 @@ export default function TransactionFilters({
     onResetFilters,
     hasActiveFilters,
     categories = [],
-}) {
+}) => {
     // Local search value for 300ms debounce
     const [localSearch, setLocalSearch] = useState(search || "");
     const [prevSearch, setPrevSearch] = useState(search || "");
@@ -46,7 +46,7 @@ export default function TransactionFilters({
     useEffect(() => {
         const timer = setTimeout(() => {
             if (localSearch !== search) {
-                onSearchChange(localSearch);
+                onSearchChange?.(localSearch);
             }
         }, 300);
         return () => clearTimeout(timer);
@@ -54,7 +54,7 @@ export default function TransactionFilters({
 
     const handleClearSearch = () => {
         setLocalSearch("");
-        onSearchChange("");
+        onSearchChange?.("");
     };
 
     return (
@@ -187,10 +187,10 @@ export default function TransactionFilters({
                             >
                                 <option value="">All Categories</option>
                                 {categories
-                                    .filter((c) => !type || c.type === type)
-                                    .map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.name} ({cat.type})
+                                    ?.filter((c) => !type || c?.type === type)
+                                    ?.map((cat) => (
+                                        <option key={cat?.id} value={cat?.id}>
+                                            {cat?.name} ({cat?.type})
                                         </option>
                                     ))}
                             </select>
@@ -253,4 +253,6 @@ export default function TransactionFilters({
             )}
         </div>
     );
-}
+};
+
+export default TransactionFilters;

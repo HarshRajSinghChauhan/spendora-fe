@@ -3,7 +3,7 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
 
-export default function Button({
+const Button = ({
     children,
     type = "button",
     variant = "primary",
@@ -14,7 +14,7 @@ export default function Button({
     icon: Icon,
     iconPosition = "left",
     ...props
-}) {
+}) => {
     const baseStyles =
         "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 select-none disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]";
 
@@ -64,4 +64,6 @@ export default function Button({
             )}
         </button>
     );
-}
+};
+
+export default Button;

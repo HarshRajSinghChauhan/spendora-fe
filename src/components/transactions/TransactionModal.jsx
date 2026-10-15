@@ -5,14 +5,14 @@ import { useForm, useWatch } from "react-hook-form";
 import { X, DollarSign, Calendar, Tag, FileText, ArrowUpCircle, ArrowDownCircle, AlertCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function TransactionModal({
+const TransactionModal = ({
     isOpen,
     onClose,
     initialData = null,
     categories = [],
     onSubmit,
     isLoading = false,
-}) {
+}) => {
     const isEdit = Boolean(initialData?.id);
 
     const {
@@ -37,27 +37,27 @@ export default function TransactionModal({
     const selectedCategoryId = useWatch({ control, name: "categoryId" });
 
     // Filter categories dynamically matching selected transaction type
-    const filteredCategories = categories.filter(
-        (cat) => cat.type === selectedType && !cat.isDisabled
-    );
+    const filteredCategories = categories?.filter(
+        (cat) => cat?.type === selectedType && !cat?.isDisabled
+    ) || [];
 
     // Group categories into Global and Custom
-    const globalCategories = filteredCategories.filter((cat) => cat.isGlobal);
-    const customCategories = filteredCategories.filter((cat) => !cat.isGlobal);
+    const globalCategories = filteredCategories?.filter((cat) => cat?.isGlobal) || [];
+    const customCategories = filteredCategories?.filter((cat) => !cat?.isGlobal) || [];
 
     // Populate form on edit / open
     useEffect(() => {
         if (isOpen) {
             if (initialData) {
-                const dateVal = initialData.transactionDate
-                    ? new Date(initialData.transactionDate).toISOString().slice(0, 10)
+                const dateVal = initialData?.transactionDate
+                    ? new Date(initialData.transactionDate)?.toISOString?.()?.slice(0, 10)
                     : new Date().toISOString().slice(0, 10);
 
                 reset({
-                    title: initialData.title || "",
-                    amount: initialData.amount ? String(initialData.amount) : "",
-                    type: initialData.type || "EXPENSE",
-                    categoryId: initialData.categoryId || initialData.category?.id || "",
+                    title: initialData?.title || "",
+                    amount: initialData?.amount ? String(initialData.amount) : "",
+                    type: initialData?.type || "EXPENSE",
+                    categoryId: initialData?.categoryId || initialData?.category?.id || "",
                     transactionDate: dateVal,
                     notes: initialData.notes || "",
                 });
@@ -78,7 +78,7 @@ export default function TransactionModal({
     useEffect(() => {
         if (!isOpen) return;
         if (selectedCategoryId) {
-            const existsInType = filteredCategories.some((c) => c.id === selectedCategoryId);
+            const existsInType = filteredCategories?.some?.((c) => c?.id === selectedCategoryId);
             if (!existsInType) {
                 setValue("categoryId", "");
             }
@@ -89,16 +89,16 @@ export default function TransactionModal({
 
     const handleFormSubmit = async (values) => {
         const payload = {
-            title: values.title?.trim() || "",
-            amount: parseFloat(values.amount),
-            type: values.type,
-            categoryId: values.categoryId,
-            transactionDate: values.transactionDate
+            title: values?.title?.trim?.() || "",
+            amount: parseFloat(values?.amount),
+            type: values?.type,
+            categoryId: values?.categoryId,
+            transactionDate: values?.transactionDate
                 ? new Date(values.transactionDate).toISOString()
                 : new Date().toISOString(),
-            notes: values.notes?.trim() || "",
+            notes: values?.notes?.trim?.() || "",
         };
-        await onSubmit(payload);
+        await onSubmit?.(payload);
     };
 
     return (
@@ -417,4 +417,6 @@ export default function TransactionModal({
             </div>
         </div>
     );
-}
+};
+
+export default TransactionModal;

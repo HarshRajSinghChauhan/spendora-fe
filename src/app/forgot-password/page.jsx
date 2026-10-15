@@ -11,7 +11,7 @@ import authApi from "@/services/auth.api";
 import { authValidation } from "@/utils/validation";
 import { toast } from "react-toastify";
 
-export default function ForgotPasswordPage() {
+const ForgotPasswordPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSent, setIsSent] = useState(false);
     const [serverError, setServerError] = useState("");
@@ -31,8 +31,9 @@ export default function ForgotPasswordPage() {
         setIsSubmitting(true);
 
         try {
-            await authApi.forgotPassword({ email: data.email.trim() });
-            setSubmittedEmail(data.email.trim());
+            const email = data?.email?.trim?.() || "";
+            await authApi.forgotPassword({ email });
+            setSubmittedEmail(email);
             setIsSent(true);
             toast.success("Password reset instructions sent to your email!");
         } catch (err) {
@@ -135,4 +136,6 @@ export default function ForgotPasswordPage() {
             )}
         </AuthLayout>
     );
-}
+};
+
+export default ForgotPasswordPage;

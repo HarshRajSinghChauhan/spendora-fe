@@ -23,7 +23,7 @@ import DeleteTransactionModal from "@/components/transactions/DeleteTransactionM
 
 // Helper to format Date to YYYY-MM-DD
 const formatDateToISO = (date) => {
-    return date.toISOString().slice(0, 10);
+    return date?.toISOString?.()?.slice(0, 10) || "";
 };
 
 // Calculate Date Range presets
@@ -52,7 +52,7 @@ const getDateRangeForPreset = (preset) => {
     }
 };
 
-export default function TransactionsPage() {
+const TransactionsPage = () => {
     const queryClient = useQueryClient();
 
     // Query & Filter States
@@ -167,15 +167,15 @@ export default function TransactionsPage() {
             const term = search.toLowerCase().trim();
             list = list.filter(
                 (tx) =>
-                    (tx.title && tx.title.toLowerCase().includes(term)) ||
-                    (tx.notes && tx.notes.toLowerCase().includes(term))
+                    (tx?.title && tx?.title?.toLowerCase()?.includes(term)) ||
+                    (tx?.notes && tx?.notes?.toLowerCase()?.includes(term))
             );
         }
 
         // Category filter
         if (category) {
             list = list.filter(
-                (tx) => tx.categoryId === category || tx.category?.id === category
+                (tx) => tx?.categoryId === category || tx?.category?.id === category
             );
         }
 
@@ -468,4 +468,6 @@ export default function TransactionsPage() {
             </div>
         </AppLayout>
     );
-}
+};
+
+export default TransactionsPage;

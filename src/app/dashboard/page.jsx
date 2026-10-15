@@ -15,7 +15,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/context/AuthContext";
 import budgetsApi from "@/services/budgets.api";
 
-export default function DashboardPage() {
+const DashboardPage = () => {
     const { user } = useAuth();
 
     const { data: budgetsResponse } = useQuery({
@@ -33,10 +33,10 @@ export default function DashboardPage() {
     );
     const summary = budgetsResponse?.summary || { totalBudgeted: 0, totalSpent: 0 };
 
-    const totalBudgetCount = budgets.length;
-    const hasExceeded = budgets.some((b) => b.isExceeded);
-    const budgetUsagePct = summary.totalBudgeted > 0
-        ? Math.round((summary.totalSpent / summary.totalBudgeted) * 100)
+    const totalBudgetCount = budgets?.length || 0;
+    const hasExceeded = budgets?.some?.((b) => b?.isExceeded) || false;
+    const budgetUsagePct = (summary?.totalBudgeted || 0) > 0
+        ? Math.round(((summary?.totalSpent || 0) / summary.totalBudgeted) * 100)
         : 0;
 
     return (
@@ -168,4 +168,6 @@ export default function DashboardPage() {
             </div>
         </AppLayout>
     );
-}
+};
+
+export default DashboardPage;

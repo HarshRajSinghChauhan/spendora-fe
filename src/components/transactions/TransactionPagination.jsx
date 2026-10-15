@@ -3,14 +3,14 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function TransactionPagination({
+const TransactionPagination = ({
     currentPage = 1,
     totalPages = 1,
     totalRecords = 0,
     limit = 10,
     onPageChange,
     onLimitChange,
-}) {
+}) => {
     if (totalRecords === 0) return null;
 
     const startRecord = (currentPage - 1) * limit + 1;
@@ -52,7 +52,7 @@ export default function TransactionPagination({
                     <span>Per page:</span>
                     <select
                         value={limit}
-                        onChange={(e) => onLimitChange(Number(e.target.value))}
+                        onChange={(e) => onLimitChange?.(Number(e?.target?.value))}
                         className="py-1 px-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-medium outline-none focus:border-emerald-500 cursor-pointer"
                     >
                         <option value={10}>10</option>
@@ -68,7 +68,7 @@ export default function TransactionPagination({
                 {/* Previous Button */}
                 <button
                     type="button"
-                    onClick={() => onPageChange(currentPage - 1)}
+                    onClick={() => onPageChange?.(currentPage - 1)}
                     disabled={currentPage <= 1}
                     aria-label="Previous page"
                     className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1 font-medium"
@@ -79,7 +79,7 @@ export default function TransactionPagination({
 
                 {/* Page Number Buttons */}
                 <div className="flex items-center gap-1">
-                    {getPageNumbers().map((page, index) => {
+                    {getPageNumbers()?.map((page, index) => {
                         if (page === "...") {
                             return (
                                 <span key={`ellipsis-${index}`} className="px-2 py-1 text-slate-400">
@@ -93,7 +93,7 @@ export default function TransactionPagination({
                             <button
                                 key={page}
                                 type="button"
-                                onClick={() => onPageChange(page)}
+                                onClick={() => onPageChange?.(page)}
                                 className={`w-8 h-8 rounded-xl font-semibold transition-all ${
                                     isActive
                                         ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
@@ -109,7 +109,7 @@ export default function TransactionPagination({
                 {/* Next Button */}
                 <button
                     type="button"
-                    onClick={() => onPageChange(currentPage + 1)}
+                    onClick={() => onPageChange?.(currentPage + 1)}
                     disabled={currentPage >= totalPages}
                     aria-label="Next page"
                     className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1 font-medium"
@@ -120,4 +120,6 @@ export default function TransactionPagination({
             </div>
         </div>
     );
-}
+};
+
+export default TransactionPagination;

@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function TransactionTable({
+const TransactionTable = ({
     transactions = [],
     isLoading = false,
     sortBy = "transactionDate",
@@ -29,12 +29,12 @@ export default function TransactionTable({
     onAddClick,
     onClearFilters,
     hasFiltersApplied = false,
-}) {
+}) => {
     const handleSortClick = (field) => {
         if (sortBy === field) {
-            onSortChange(field, sortOrder === "ASC" ? "DESC" : "ASC");
+            onSortChange?.(field, sortOrder === "ASC" ? "DESC" : "ASC");
         } else {
-            onSortChange(field, "DESC");
+            onSortChange?.(field, "DESC");
         }
     };
 
@@ -202,11 +202,11 @@ export default function TransactionTable({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                        {transactions.map((tx) => {
-                            const isIncome = tx.type === "INCOME";
+                        {transactions?.map((tx) => {
+                            const isIncome = tx?.type === "INCOME";
                             return (
                                 <tr
-                                    key={tx.id}
+                                    key={tx?.id}
                                     className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors group"
                                 >
                                     {/* Date */}
@@ -269,7 +269,7 @@ export default function TransactionTable({
                                         <div className="flex items-center justify-end gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 type="button"
-                                                onClick={() => onEdit(tx)}
+                                                onClick={() => onEdit?.(tx)}
                                                 className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
                                                 title="Edit Transaction"
                                             >
@@ -277,7 +277,7 @@ export default function TransactionTable({
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => onDelete(tx)}
+                                                onClick={() => onDelete?.(tx)}
                                                 className="p-2 rounded-xl text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                                                 title="Delete Transaction"
                                             >
@@ -294,10 +294,10 @@ export default function TransactionTable({
 
             {/* Mobile Card List View (Visible on small screens) */}
             <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800/60">
-                {transactions.map((tx) => {
-                    const isIncome = tx.type === "INCOME";
+                {transactions?.map((tx) => {
+                    const isIncome = tx?.type === "INCOME";
                     return (
-                        <div key={tx.id} className="p-4 space-y-3">
+                        <div key={tx?.id} className="p-4 space-y-3">
                             <div className="flex items-start justify-between gap-3">
                                 <div className="flex items-center gap-2.5">
                                     <div
@@ -315,10 +315,10 @@ export default function TransactionTable({
                                     </div>
                                     <div>
                                         <h4 className="font-semibold text-sm text-slate-900 dark:text-white leading-tight">
-                                            {tx.title || "Untitled Transaction"}
+                                            {tx?.title || "Untitled Transaction"}
                                         </h4>
                                         <p className="text-[11px] text-slate-400 mt-0.5">
-                                            {formatDate(tx.transactionDate || tx.createdAt)}
+                                            {formatDate(tx?.transactionDate || tx?.createdAt)}
                                         </p>
                                     </div>
                                 </div>
@@ -329,26 +329,26 @@ export default function TransactionTable({
                                             : "text-rose-600 dark:text-rose-400"
                                     }`}
                                 >
-                                    {isIncome ? "+" : "-"}₹{formatAmount(tx.amount)}
+                                    {isIncome ? "+" : "-"}₹{formatAmount(tx?.amount)}
                                 </div>
                             </div>
 
-                            {tx.notes && (
+                            {tx?.notes && (
                                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                                    {tx.notes}
+                                    {tx?.notes}
                                 </p>
                             )}
 
                             <div className="flex items-center justify-between pt-1">
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                                     <Tag className="w-3 h-3 text-slate-400" />
-                                    <span>{tx.category?.name || "General"}</span>
+                                    <span>{tx?.category?.name || "General"}</span>
                                 </span>
 
                                 <div className="flex items-center gap-1">
                                     <button
                                         type="button"
-                                        onClick={() => onEdit(tx)}
+                                        onClick={() => onEdit?.(tx)}
                                         className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-600 hover:bg-slate-100 transition-colors"
                                         title="Edit"
                                     >
@@ -356,7 +356,7 @@ export default function TransactionTable({
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => onDelete(tx)}
+                                        onClick={() => onDelete?.(tx)}
                                         className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 transition-colors"
                                         title="Delete"
                                     >
@@ -370,4 +370,6 @@ export default function TransactionTable({
             </div>
         </div>
     );
-}
+};
+
+export default TransactionTable;

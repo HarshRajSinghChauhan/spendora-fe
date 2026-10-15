@@ -16,7 +16,7 @@ const AuthContext = createContext({
     updateUser: () => {},
 });
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
                     setUser(userData);
                 } else {
                     // Fallback basic user info if backend returns only email
-                    const fallbackUser = { email: credentials.email };
+                    const fallbackUser = { email: credentials?.email || "" };
                     localStorage.setItem("user", JSON.stringify(fallbackUser));
                     setUser(fallbackUser);
                 }
@@ -95,7 +95,7 @@ export function AuthProvider({ children }) {
                 }
 
                 toast.success(message || "Welcome back to Spendora!");
-                return { success: true, user: userData || { email: credentials.email }, token: accessToken };
+                return { success: true, user: userData || { email: credentials?.email || "" }, token: accessToken };
             } catch (error) {
                 const errorMessage =
                     error?.response?.data?.message ||
@@ -184,12 +184,14 @@ export function AuthProvider({ children }) {
             {children}
         </AuthContext.Provider>
     );
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
-}
+};
+
+export default AuthContext;

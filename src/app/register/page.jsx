@@ -12,7 +12,7 @@ import PasswordStrengthMeter from "@/components/auth/PasswordStrengthMeter";
 import { useAuth } from "@/context/AuthContext";
 import { authValidation } from "@/utils/validation";
 
-export default function RegisterPage() {
+const RegisterPage = () => {
     const router = useRouter();
     const { register: registerUser, isAuthenticated, isLoading: authLoading } = useAuth();
 
@@ -49,9 +49,9 @@ export default function RegisterPage() {
 
         try {
             const result = await registerUser({
-                name: data.name.trim(),
-                email: data.email.trim(),
-                password: data.password,
+                name: data?.name?.trim?.() || "",
+                email: data?.email?.trim?.() || "",
+                password: data?.password,
             });
 
             // If auto-logged in, navigate to dashboard; otherwise redirect to login
@@ -61,7 +61,7 @@ export default function RegisterPage() {
                 router.push("/login?registered=true");
             }
         } catch (err) {
-            setServerError(err.message || "Registration failed. Please try again.");
+            setServerError(err?.message || "Registration failed. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -163,4 +163,6 @@ export default function RegisterPage() {
             </form>
         </AuthLayout>
     );
-}
+};
+
+export default RegisterPage;

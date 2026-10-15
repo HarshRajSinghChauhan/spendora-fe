@@ -11,15 +11,16 @@ import {
     ArrowUpRight,
     CheckCircle2,
 } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
-export default function AuthLayout({
+const AuthLayout = ({
     title,
     subtitle,
     children,
     footerPrompt,
     footerLinkText,
     footerLinkHref,
-}) {
+}) => {
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-slate-100 to-emerald-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20 p-4 sm:p-6 lg:p-8">
             {/* Background ambient lighting */}
@@ -29,6 +30,10 @@ export default function AuthLayout({
             </div>
 
             <div className="relative w-full max-w-5xl bg-white dark:bg-slate-900/90 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-200/80 dark:border-slate-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 backdrop-blur-xl">
+                {/* Theme Toggle in top-right */}
+                <div className="absolute top-4 right-4 z-30">
+                    <ThemeToggle />
+                </div>
                 {/* Left Side: Product Showcase & Brand Hero (Visible on lg screens) */}
                 <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 text-white relative overflow-hidden">
                     {/* Background patterns */}
@@ -144,4 +149,6 @@ export default function AuthLayout({
             </div>
         </div>
     );
-}
+};
+
+export default AuthLayout;

@@ -11,10 +11,10 @@ import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 import { authValidation } from "@/utils/validation";
 
-function LoginForm() {
+const LoginForm = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectUrl = searchParams.get("redirect") || "/dashboard";
+    const redirectUrl = searchParams?.get("redirect") || "/dashboard";
 
     const { login, isAuthenticated, isLoading: authLoading } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
@@ -48,16 +48,16 @@ function LoginForm() {
         try {
             await login(
                 {
-                    email: data.email.trim(),
-                    password: data.password,
+                    email: data?.email?.trim?.() || "",
+                    password: data?.password,
                 },
-                data.rememberMe
+                data?.rememberMe
             );
 
             // Redirect user to destination
             router.push(redirectUrl);
         } catch (err) {
-            setServerError(err.message || "Failed to log in. Please check your credentials.");
+            setServerError(err?.message || "Failed to log in. Please check your credentials.");
         } finally {
             setIsSubmitting(false);
         }
@@ -161,7 +161,7 @@ function LoginForm() {
     );
 }
 
-export default function LoginPage() {
+const LoginPage = () => {
     return (
         <Suspense
             fallback={
@@ -173,4 +173,6 @@ export default function LoginPage() {
             <LoginForm />
         </Suspense>
     );
-}
+};
+
+export default LoginPage;

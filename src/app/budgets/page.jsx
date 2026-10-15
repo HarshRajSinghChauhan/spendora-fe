@@ -24,7 +24,7 @@ import DeleteBudgetModal from "@/components/budgets/DeleteBudgetModal";
 import BudgetFilters from "@/components/budgets/BudgetFilters";
 import BudgetPagination from "@/components/budgets/BudgetPagination";
 
-export default function BudgetsPage() {
+const BudgetsPage = () => {
     const queryClient = useQueryClient();
 
     // Query & Pagination states
@@ -104,14 +104,14 @@ export default function BudgetsPage() {
 
         // Overall Expenses filter
         if (categoryId === "OVERALL") {
-            list = list.filter((b) => !b.categoryId);
+            list = list.filter((b) => !b?.categoryId);
         }
 
         // Search in category name or "Overall Expenses"
         if (search.trim()) {
             const term = search.toLowerCase().trim();
             list = list.filter((b) => {
-                const name = b.category?.name || "Overall Expenses";
+                const name = b?.category?.name || "Overall Expenses";
                 return name.toLowerCase().includes(term);
             });
         }
@@ -121,7 +121,7 @@ export default function BudgetsPage() {
 
     // Exceeded budgets count
     const exceededCount = useMemo(() => {
-        return rawBudgets.filter((b) => b.isExceeded).length;
+        return rawBudgets.filter((b) => b?.isExceeded)?.length || 0;
     }, [rawBudgets]);
 
     // 5. Mutations
@@ -467,4 +467,6 @@ export default function BudgetsPage() {
             />
         </AppLayout>
     );
-}
+};
+
+export default BudgetsPage;

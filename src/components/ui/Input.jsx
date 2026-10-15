@@ -2,7 +2,7 @@
 
 import React, { forwardRef } from "react";
 
-const Input = forwardRef(function Input(
+const Input = forwardRef((
     {
         label,
         error,
@@ -20,7 +20,7 @@ const Input = forwardRef(function Input(
         ...props
     },
     ref
-) {
+) => {
     const inputId = id || name;
 
     return (
@@ -94,5 +94,7 @@ const Input = forwardRef(function Input(
         </div>
     );
 });
+
+Input.displayName = "Input";
 
 export default Input;
