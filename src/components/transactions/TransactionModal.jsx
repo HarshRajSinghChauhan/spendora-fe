@@ -30,6 +30,7 @@ const TransactionModal = ({
                     ? new Date(initialData.transactionDate).toISOString().slice(0, 10)
                     : new Date().toISOString().slice(0, 10);
 
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setTitle(initialData?.title || "");
                 setAmount(
                     initialData?.amount !== undefined && initialData?.amount !== null

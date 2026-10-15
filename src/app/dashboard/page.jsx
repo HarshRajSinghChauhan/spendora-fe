@@ -14,10 +14,16 @@ import {
 import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/context/AuthContext";
 import budgetsApi from "@/services/budgets.api";
+import analyticsApi from "@/services/analytics.api";
+import IncomeExpenseChartCard from "@/components/dashboard/IncomeExpenseChartCard";
+import CategoryExpensesCard from "@/components/dashboard/CategoryExpensesCard";
+import RecentTransactionsCard from "@/components/dashboard/RecentTransactionsCard";
+import BudgetOverviewCard from "@/components/dashboard/BudgetOverviewCard";
 
 const DashboardPage = () => {
     const { user } = useAuth();
 
+    // Fetch active budgets for budget usage metric
     const { data: budgetsResponse } = useQuery({
         queryKey: ["budgets", { active: true, limit: 100 }],
         queryFn: async () => {
@@ -27,11 +33,22 @@ const DashboardPage = () => {
         staleTime: 60 * 1000,
     });
 
+    // Fetch high-level financial summary
+    const { data: summaryResponse } = useQuery({
+        queryKey: ["analytics", "dashboard-summary"],
+        queryFn: async () => {
+            const res = await analyticsApi.getDashboardSummary();
+            return res?.data || res || {};
+        },
+        staleTime: 30 * 1000,
+    });
+
     const budgets = useMemo(
         () => budgetsResponse?.budgets || [],
         [budgetsResponse?.budgets]
     );
     const summary = budgetsResponse?.summary || { totalBudgeted: 0, totalSpent: 0 };
+    const dashboardMetrics = summaryResponse || {};
 
     const totalBudgetCount = budgets?.length || 0;
     const hasExceeded = budgets?.some?.((b) => b?.isExceeded) || false;
@@ -69,7 +86,9 @@ const DashboardPage = () => {
                             </div>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                                ₹{Number(dashboardMetrics?.totalBalance || 0).toLocaleString("en-IN")}
+                            </p>
                             <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
                                 <ArrowUpRight className="w-3 h-3" /> Net Balance Ready
                             </p>
@@ -85,7 +104,9 @@ const DashboardPage = () => {
                             </div>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                                ₹{Number(dashboardMetrics?.incomeThisMonth || 0).toLocaleString("en-IN")}
+                            </p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                 This Month
                             </p>
@@ -101,7 +122,9 @@ const DashboardPage = () => {
                             </div>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                                ₹{Number(dashboardMetrics?.expensesThisMonth || 0).toLocaleString("en-IN")}
+                            </p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                 This Month
                             </p>
@@ -139,31 +162,19 @@ const DashboardPage = () => {
                     </Link>
                 </div>
 
-                {/* Account Details Box */}
-                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
-                        Active Session Details
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-400 block mb-1">User Identifier / Name</span>
-                            <span className="font-semibold text-slate-900 dark:text-white">
-                                {user?.name || "Not provided"}
-                            </span>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-400 block mb-1">Email Address</span>
-                            <span className="font-semibold text-slate-900 dark:text-white truncate block">
-                                {user?.email || "Unknown"}
-                            </span>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-400 block mb-1">Role / Access Level</span>
-                            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                                {user?.role || "USER"}
-                            </span>
-                        </div>
-                    </div>
+                {/* Financial Graphs & Lists Grid (Below Current Cards) */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Card 1: Income vs Expenses Bar Chart */}
+                    <IncomeExpenseChartCard />
+
+                    {/* Card 2: Expenses by Category Donut Chart & Breakdown */}
+                    <CategoryExpensesCard />
+
+                    {/* Card 3: Recent Transactions List */}
+                    <RecentTransactionsCard />
+
+                    {/* Card 4: Budget Overview Progress */}
+                    <BudgetOverviewCard />
                 </div>
             </div>
         </AppLayout>

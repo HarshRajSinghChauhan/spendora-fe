@@ -5,7 +5,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
-const AppLayout = ({ children, onQuickAddClick }) => {
+const AppLayout = ({ children, onQuickAddClick, onNotificationsClick }) => {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
         if (typeof window !== "undefined") {
@@ -70,6 +70,7 @@ const AppLayout = ({ children, onQuickAddClick }) => {
                     <Header
                         onOpenMobileSidebar={() => setIsMobileOpen(true)}
                         onQuickAddClick={onQuickAddClick}
+                        onNotificationsClick={onNotificationsClick}
                     />
 
                     {/* Page Content Slot */}
