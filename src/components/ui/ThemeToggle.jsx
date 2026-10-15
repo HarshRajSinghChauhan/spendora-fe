@@ -4,12 +4,12 @@ import React from "react";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function ThemeToggle({
+const ThemeToggle = ({
     variant = "icon", // "icon" | "pill" | "row"
     className = "",
     showLabel = false,
-}) {
-    const { theme, isDark, toggleTheme, mounted } = useTheme();
+}) => {
+    const { isDark, toggleTheme, mounted } = useTheme();
 
     // Prevent hydration mismatch by rendering a matching placeholder skeleton before mount
     if (!mounted) {
@@ -85,7 +85,7 @@ export default function ThemeToggle({
             >
                 <button
                     type="button"
-                    onClick={() => !isDark || toggleTheme()}
+                    onClick={() => !isDark || toggleTheme?.()}
                     aria-label="Switch to light theme"
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 ${
                         !isDark
@@ -98,7 +98,7 @@ export default function ThemeToggle({
                 </button>
                 <button
                     type="button"
-                    onClick={() => isDark || toggleTheme()}
+                    onClick={() => isDark || toggleTheme?.()}
                     aria-label="Switch to dark theme"
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 ${
                         isDark
@@ -135,4 +135,6 @@ export default function ThemeToggle({
             <span className="sr-only">Toggle theme</span>
         </button>
     );
-}
+};
+
+export default ThemeToggle;

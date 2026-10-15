@@ -61,15 +61,15 @@ const formatDate = (isoString) => {
     });
 };
 
-export default function BudgetCard({ budget, onEdit, onDelete }) {
-    const isOverall = !budget.categoryId || !budget.category;
-    const categoryName = isOverall ? "Overall Expenses" : (budget.category?.name || "Category");
+const BudgetCard = ({ budget, onEdit, onDelete }) => {
+    const isOverall = !budget?.categoryId || !budget?.category;
+    const categoryName = isOverall ? "Overall Expenses" : (budget?.category?.name || "Category");
 
-    const limit = Number(budget.limitAmount || 0);
-    const spent = Number(budget.spentAmount || 0);
-    const remaining = Number(budget.remainingAmount ?? (limit - spent));
-    const spentPercentage = Number(budget.spentPercentage ?? (limit > 0 ? (spent / limit) * 100 : 0));
-    const isExceeded = Boolean(budget.isExceeded || spent > limit);
+    const limit = Number(budget?.limitAmount || 0);
+    const spent = Number(budget?.spentAmount || 0);
+    const remaining = Number(budget?.remainingAmount ?? (limit - spent));
+    const spentPercentage = Number(budget?.spentPercentage ?? (limit > 0 ? (spent / limit) * 100 : 0));
+    const isExceeded = Boolean(budget?.isExceeded || spent > limit);
 
     // Active status determination
     const now = new Date();
@@ -227,7 +227,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
                 <div className="flex items-center gap-1.5 truncate">
                     <Calendar className="w-3.5 h-3.5 shrink-0" />
                     <span className="truncate">
-                        {formatDate(budget.startDate)} – {formatDate(budget.endDate)}
+                        {formatDate(budget?.startDate)} – {formatDate(budget?.endDate)}
                     </span>
                 </div>
 
@@ -251,4 +251,6 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
             </div>
         </div>
     );
-}
+};
+
+export default BudgetCard;

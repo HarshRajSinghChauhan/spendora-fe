@@ -4,18 +4,18 @@ import React from "react";
 import { AlertTriangle, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function DeleteBudgetModal({
+const DeleteBudgetModal = ({
     isOpen,
     onClose,
     budget,
     onConfirm,
     isLoading = false,
-}) {
+}) => {
     if (!isOpen || !budget) return null;
 
-    const isOverall = !budget.categoryId || !budget.category;
-    const categoryName = isOverall ? "Overall Expenses" : (budget.category?.name || "Category");
-    const formattedAmount = `₹${Number(budget.limitAmount || 0).toLocaleString("en-IN", {
+    const isOverall = !budget?.categoryId || !budget?.category;
+    const categoryName = isOverall ? "Overall Expenses" : (budget?.category?.name || "Category");
+    const formattedAmount = `₹${Number(budget?.limitAmount || 0).toLocaleString("en-IN", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     })}`;
@@ -67,7 +67,7 @@ export default function DeleteBudgetModal({
                     </div>
                     <div className="flex justify-between">
                         <span className="text-slate-500 dark:text-slate-400">Cycle:</span>
-                        <span className="font-semibold text-slate-900 dark:text-white">{budget.budgetType}</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">{budget?.budgetType}</span>
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@ export default function DeleteBudgetModal({
                     <Button
                         type="button"
                         variant="danger"
-                        onClick={() => onConfirm(budget.id)}
+                        onClick={() => onConfirm?.(budget?.id)}
                         isLoading={isLoading}
                     >
                         Delete Budget
@@ -98,4 +98,6 @@ export default function DeleteBudgetModal({
             </div>
         </div>
     );
-}
+};
+
+export default DeleteBudgetModal;

@@ -13,14 +13,14 @@ import {
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
-export default function AuthLayout({
+const AuthLayout = ({
     title,
     subtitle,
     children,
     footerPrompt,
     footerLinkText,
     footerLinkHref,
-}) {
+}) => {
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-slate-100 to-emerald-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20 p-4 sm:p-6 lg:p-8">
             {/* Background ambient lighting */}
@@ -149,4 +149,6 @@ export default function AuthLayout({
             </div>
         </div>
     );
-}
+};
+
+export default AuthLayout;

@@ -27,10 +27,10 @@ const PAGE_TITLES = {
     "/admin": "Admin Control Panel",
 };
 
-export default function Header({
+const Header = ({
     onOpenMobileSidebar = () => {},
     onQuickAddClick,
-}) {
+}) => {
     const pathname = usePathname();
     const { user } = useAuth();
 
@@ -38,14 +38,14 @@ export default function Header({
 
     const getInitials = (name, email) => {
         if (name) {
-            const parts = name.trim().split(" ");
-            if (parts.length >= 2) {
-                return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+            const parts = name?.trim?.()?.split(" ") || [];
+            if (parts?.length >= 2) {
+                return `${parts[0]?.[0] || ""}${parts[1]?.[0] || ""}`.toUpperCase();
             }
-            return name.slice(0, 2).toUpperCase();
+            return name?.slice(0, 2)?.toUpperCase() || "SP";
         }
         if (email) {
-            return email.slice(0, 2).toUpperCase();
+            return email?.slice(0, 2)?.toUpperCase() || "SP";
         }
         return "SP";
     };
@@ -124,4 +124,6 @@ export default function Header({
             </div>
         </header>
     );
-}
+};
+
+export default Header;

@@ -13,10 +13,10 @@ import authApi from "@/services/auth.api";
 import { authValidation } from "@/utils/validation";
 import { toast } from "react-toastify";
 
-function ResetPasswordForm() {
+const ResetPasswordForm = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const token = searchParams.get("token");
+    const token = searchParams?.get("token");
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,7 +50,7 @@ function ResetPasswordForm() {
         try {
             await authApi.resetPassword({
                 token,
-                password: data.password,
+                password: data?.password,
             });
 
             toast.success("Password reset successfully! Please sign in with your new password.");
@@ -190,9 +190,9 @@ function ResetPasswordForm() {
             </form>
         </AuthLayout>
     );
-}
+};
 
-export default function ResetPasswordPage() {
+const ResetPasswordPage = () => {
     return (
         <Suspense
             fallback={
@@ -204,4 +204,6 @@ export default function ResetPasswordPage() {
             <ResetPasswordForm />
         </Suspense>
     );
-}
+};
+
+export default ResetPasswordPage;

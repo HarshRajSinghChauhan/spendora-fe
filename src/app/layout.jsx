@@ -17,7 +17,7 @@ export const metadata = {
   description: "Track expenses, manage budgets, and achieve financial goals with Spendora.",
 };
 
-export default function RootLayout({ children }) {
+const RootLayout = ({ children }) => {
   return (
     <html
       lang="en"
@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=localStorage.getItem('spendora_theme');var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark');document.documentElement.classList.remove('light');}else{document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}}catch(e){}})();`,
+            __html: `(() => { try { const s = localStorage.getItem('spendora_theme'); const d = s ? s === 'dark' : window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches; if (d) { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); } else { document.documentElement.classList.remove('dark'); document.documentElement.classList.add('light'); } } catch (e) {} })();`,
           }}
         />
       </head>
@@ -39,4 +39,6 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

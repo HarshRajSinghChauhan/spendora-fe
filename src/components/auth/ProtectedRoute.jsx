@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
-export default function ProtectedRoute({ children }) {
+const ProtectedRoute = ({ children }) => {
     const { isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
@@ -35,4 +35,6 @@ export default function ProtectedRoute({ children }) {
     }
 
     return <>{children}</>;
-}
+};
+
+export default ProtectedRoute;

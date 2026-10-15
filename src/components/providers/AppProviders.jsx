@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 
-export default function AppProviders({ children }) {
+const AppProviders = ({ children }) => {
     const [queryClient] = useState(
         () =>
             new QueryClient({
@@ -42,4 +42,6 @@ export default function AppProviders({ children }) {
             </ThemeProvider>
         </QueryClientProvider>
     );
-}
+};
+
+export default AppProviders;

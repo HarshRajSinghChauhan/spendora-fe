@@ -4,16 +4,16 @@ import React from "react";
 import { AlertTriangle, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function DeleteTransactionModal({
+const DeleteTransactionModal = ({
     isOpen,
     onClose,
     transaction,
     onConfirm,
     isLoading = false,
-}) {
+}) => {
     if (!isOpen || !transaction) return null;
 
-    const transactionTitle = transaction.title || "this transaction";
+    const transactionTitle = transaction?.title || "this transaction";
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -50,7 +50,7 @@ export default function DeleteTransactionModal({
                     </div>
                 </div>
 
-                {/* Explicit confirmation message required by Section 6.1 */}
+                {/* Explicit confirmation message */}
                 <p id="delete-dialog-description" className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     Are you sure you want to delete <span className="font-semibold text-slate-900 dark:text-white">&apos;{transactionTitle}&apos;</span>? This action cannot be undone.
                 </p>
@@ -59,14 +59,14 @@ export default function DeleteTransactionModal({
                 <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800 text-xs flex items-center justify-between">
                     <div>
                         <p className="font-medium text-slate-900 dark:text-slate-200">
-                            {transaction.category?.name || "Uncategorized"}
+                            {transaction?.category?.name || "Uncategorized"}
                         </p>
                         <p className="text-slate-400 text-[11px] mt-0.5">
-                            {transaction.transactionDate ? new Date(transaction.transactionDate).toLocaleDateString() : "Recent"}
+                            {transaction?.transactionDate ? new Date(transaction.transactionDate).toLocaleDateString() : "Recent"}
                         </p>
                     </div>
-                    <div className={`font-bold text-sm ${transaction.type === "INCOME" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
-                        {transaction.type === "INCOME" ? "+" : "-"}₹{parseFloat(transaction.amount || 0).toFixed(2)}
+                    <div className={`font-bold text-sm ${transaction?.type === "INCOME" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                        {transaction?.type === "INCOME" ? "+" : "-"}₹{parseFloat(transaction?.amount || 0).toFixed(2)}
                     </div>
                 </div>
 
@@ -83,7 +83,7 @@ export default function DeleteTransactionModal({
                     <Button
                         type="button"
                         variant="danger"
-                        onClick={() => onConfirm(transaction.id)}
+                        onClick={() => onConfirm?.(transaction?.id)}
                         isLoading={isLoading}
                     >
                         Delete
@@ -92,4 +92,6 @@ export default function DeleteTransactionModal({
             </div>
         </div>
     );
-}
+};
+
+export default DeleteTransactionModal;

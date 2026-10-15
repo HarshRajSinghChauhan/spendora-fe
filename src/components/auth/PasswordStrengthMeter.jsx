@@ -3,22 +3,22 @@
 import React, { useMemo } from "react";
 import { Check, X } from "lucide-react";
 
-export default function PasswordStrengthMeter({ password = "" }) {
+const PasswordStrengthMeter = ({ password = "" }) => {
     const analysis = useMemo(() => {
         const criteria = [
-            { id: "length", label: "At least 8 characters", met: password.length >= 8 },
-            { id: "uppercase", label: "One uppercase letter", met: /[A-Z]/.test(password) },
-            { id: "lowercase", label: "One lowercase letter", met: /[a-z]/.test(password) },
-            { id: "number", label: "One number", met: /[0-9]/.test(password) },
-            { id: "special", label: "One special character (@$!%*?&...)", met: /[^A-Za-z0-9]/.test(password) },
+            { id: "length", label: "At least 8 characters", met: (password?.length || 0) >= 8 },
+            { id: "uppercase", label: "One uppercase letter", met: /[A-Z]/.test(password || "") },
+            { id: "lowercase", label: "One lowercase letter", met: /[a-z]/.test(password || "") },
+            { id: "number", label: "One number", met: /[0-9]/.test(password || "") },
+            { id: "special", label: "One special character (@$!%*?&...)", met: /[^A-Za-z0-9]/.test(password || "") },
         ];
 
-        const score = criteria.filter((c) => c.met).length;
+        const score = criteria.filter((c) => c?.met)?.length || 0;
 
         let strengthLabel = "Weak";
         let strengthColor = "bg-rose-500";
         let textColor = "text-rose-600 dark:text-rose-400";
-        let percent = (score / criteria.length) * 100;
+        let percent = (score / (criteria?.length || 5)) * 100;
 
         if (score === 0) {
             strengthLabel = "Too weak";
@@ -51,7 +51,7 @@ export default function PasswordStrengthMeter({ password = "" }) {
             {/* Header bar and label */}
             <div className="flex items-center justify-between text-xs font-medium">
                 <span className="text-slate-500 dark:text-slate-400">Password Strength:</span>
-                <span className={`font-semibold ${analysis.textColor}`}>{analysis.strengthLabel}</span>
+                <span className={`font-semibold ${analysis?.textColor}`}>{analysis?.strengthLabel}</span>
             </div>
 
             {/* Strength progress bar segments */}
@@ -60,7 +60,7 @@ export default function PasswordStrengthMeter({ password = "" }) {
                     <div
                         key={level}
                         className={`h-full rounded-full transition-all duration-300 ${
-                            analysis.score >= level ? analysis.strengthColor : "bg-transparent"
+                            (analysis?.score || 0) >= level ? analysis?.strengthColor : "bg-transparent"
                         }`}
                     />
                 ))}
@@ -68,24 +68,26 @@ export default function PasswordStrengthMeter({ password = "" }) {
 
             {/* Checklist of requirements */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
-                {analysis.criteria.map((item) => (
+                {analysis?.criteria?.map((item) => (
                     <div
-                        key={item.id}
+                        key={item?.id}
                         className={`flex items-center text-[11px] transition-colors duration-200 ${
-                            item.met
+                            item?.met
                                 ? "text-emerald-600 dark:text-emerald-400 font-medium"
                                 : "text-slate-400 dark:text-slate-500"
                         }`}
                     >
-                        {item.met ? (
+                        {item?.met ? (
                             <Check className="w-3.5 h-3.5 mr-1.5 shrink-0 stroke-[2.5]" />
                         ) : (
                             <X className="w-3.5 h-3.5 mr-1.5 shrink-0 opacity-40" />
                         )}
-                        <span>{item.label}</span>
+                        <span>{item?.label}</span>
                     </div>
                 ))}
             </div>
         </div>
     );
-}
+};
+
+export default PasswordStrengthMeter;

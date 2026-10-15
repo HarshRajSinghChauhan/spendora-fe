@@ -5,7 +5,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
-export default function AppLayout({ children, onQuickAddClick }) {
+const AppLayout = ({ children, onQuickAddClick }) => {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
         if (typeof window !== "undefined") {
@@ -44,13 +44,13 @@ export default function AppLayout({ children, onQuickAddClick }) {
     // Close mobile drawer on Escape key press
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === "Escape" && isMobileOpen) {
+            if (e?.key === "Escape" && isMobileOpen) {
                 setIsMobileOpen(false);
             }
         };
 
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
+        window?.addEventListener?.("keydown", handleKeyDown);
+        return () => window?.removeEventListener?.("keydown", handleKeyDown);
     }, [isMobileOpen]);
 
     return (
@@ -80,4 +80,6 @@ export default function AppLayout({ children, onQuickAddClick }) {
             </div>
         </ProtectedRoute>
     );
-}
+};
+
+export default AppLayout;

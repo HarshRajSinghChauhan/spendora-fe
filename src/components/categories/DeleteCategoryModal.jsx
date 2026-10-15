@@ -4,16 +4,16 @@ import React from "react";
 import { AlertTriangle, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function DeleteCategoryModal({
+const DeleteCategoryModal = ({
     isOpen,
     onClose,
     category,
     onConfirm,
     isLoading = false,
-}) {
+}) => {
     if (!isOpen || !category) return null;
 
-    const categoryName = category.name || "this category";
+    const categoryName = category?.name || "this category";
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -73,7 +73,7 @@ export default function DeleteCategoryModal({
                     <Button
                         type="button"
                         variant="danger"
-                        onClick={() => onConfirm(category.id)}
+                        onClick={() => onConfirm?.(category?.id)}
                         isLoading={isLoading}
                     >
                         Delete Category
@@ -82,4 +82,6 @@ export default function DeleteCategoryModal({
             </div>
         </div>
     );
-}
+};
+
+export default DeleteCategoryModal;

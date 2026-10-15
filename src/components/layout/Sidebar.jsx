@@ -62,12 +62,12 @@ export const SECONDARY_NAV_ITEMS = [
     },
 ];
 
-export default function Sidebar({
+const Sidebar = ({
     isOpenMobile = false,
     onCloseMobile = () => {},
     isCollapsed = false,
     onToggleCollapse = () => {},
-}) {
+}) => {
     const pathname = usePathname();
     const { user, logout } = useAuth();
 
@@ -82,14 +82,14 @@ export default function Sidebar({
 
     const getInitials = (name, email) => {
         if (name) {
-            const parts = name.trim().split(" ");
-            if (parts.length >= 2) {
-                return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+            const parts = name?.trim?.()?.split(" ") || [];
+            if (parts?.length >= 2) {
+                return `${parts[0]?.[0] || ""}${parts[1]?.[0] || ""}`.toUpperCase();
             }
-            return name.slice(0, 2).toUpperCase();
+            return name?.slice(0, 2)?.toUpperCase() || "SP";
         }
         if (email) {
-            return email.slice(0, 2).toUpperCase();
+            return email?.slice(0, 2)?.toUpperCase() || "SP";
         }
         return "SP";
     };
@@ -105,7 +105,7 @@ export default function Sidebar({
                         key={item.name}
                         href={item.href}
                         onClick={() => {
-                            if (isMobile) onCloseMobile();
+                            if (isMobile) onCloseMobile?.();
                         }}
                         title={isCollapsed && !isMobile ? item.name : undefined}
                         className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 select-none
@@ -441,4 +441,6 @@ export default function Sidebar({
             </aside>
         </>
     );
-}
+};
+
+export default Sidebar;

@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function BudgetFilters({
+const BudgetFilters = ({
     search,
     onSearchChange,
     budgetType,
@@ -27,7 +27,7 @@ export default function BudgetFilters({
     onResetFilters,
     hasActiveFilters,
     categories = [],
-}) {
+}) => {
     // 300ms debounced search
     const [localSearch, setLocalSearch] = useState(search || "");
     const [prevSearch, setPrevSearch] = useState(search || "");
@@ -41,7 +41,7 @@ export default function BudgetFilters({
     useEffect(() => {
         const timer = setTimeout(() => {
             if (localSearch !== search) {
-                onSearchChange(localSearch);
+                onSearchChange?.(localSearch);
             }
         }, 300);
         return () => clearTimeout(timer);
@@ -167,9 +167,9 @@ export default function BudgetFilters({
                         >
                             <option value="">All Scopes</option>
                             <option value="OVERALL">Overall Expenses Only</option>
-                            {expenseCategories.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
+                            {expenseCategories?.map((c) => (
+                                <option key={c?.id} value={c?.id}>
+                                    {c?.name}
                                 </option>
                             ))}
                         </select>
@@ -210,4 +210,6 @@ export default function BudgetFilters({
             )}
         </div>
     );
-}
+};
+
+export default BudgetFilters;

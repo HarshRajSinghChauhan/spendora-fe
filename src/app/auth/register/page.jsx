@@ -1,5 +1,7 @@
 import RegisterPage from "@/app/register/page";
 
-export default function AuthRegisterPage() {
+const AuthRegisterPage = () => {
     return <RegisterPage />;
-}
+};
+
+export default AuthRegisterPage;
