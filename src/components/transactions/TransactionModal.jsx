@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { X, DollarSign, Calendar, Tag, FileText, ArrowUpCircle, ArrowDownCircle, AlertCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, DollarSign, Calendar, Tag, ArrowUpCircle, ArrowDownCircle, AlertCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 const TransactionModal = ({
@@ -15,89 +14,116 @@ const TransactionModal = ({
 }) => {
     const isEdit = Boolean(initialData?.id);
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        setValue,
-        reset,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            title: "",
-            amount: "",
-            type: "EXPENSE",
-            categoryId: "",
-            transactionDate: new Date().toISOString().slice(0, 10),
-            notes: "",
-        },
-    });
+    const [type, setType] = useState("EXPENSE");
+    const [title, setTitle] = useState("");
+    const [amount, setAmount] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+    const [transactionDate, setTransactionDate] = useState(() => new Date().toISOString().slice(0, 10));
+    const [notes, setNotes] = useState("");
+    const [errors, setErrors] = useState({});
 
-    const selectedType = useWatch({ control, name: "type" });
-    const selectedCategoryId = useWatch({ control, name: "categoryId" });
+    // Populate form state whenever modal opens or initialData changes
+    useEffect(() => {
+        if (isOpen) {
+            if (initialData) {
+                const dateVal = initialData?.transactionDate
+                    ? new Date(initialData.transactionDate).toISOString().slice(0, 10)
+                    : new Date().toISOString().slice(0, 10);
+
+                setTitle(initialData?.title || "");
+                setAmount(
+                    initialData?.amount !== undefined && initialData?.amount !== null
+                        ? String(initialData.amount)
+                        : ""
+                );
+                setType(initialData?.type || "EXPENSE");
+                setCategoryId(initialData?.categoryId || initialData?.category?.id || "");
+                setTransactionDate(dateVal);
+                setNotes(initialData?.notes || "");
+            } else {
+                setTitle("");
+                setAmount("");
+                setType("EXPENSE");
+                setCategoryId("");
+                setTransactionDate(new Date().toISOString().slice(0, 10));
+                setNotes("");
+            }
+            setErrors({});
+        }
+    }, [isOpen, initialData]);
+
+    if (!isOpen) return null;
 
     // Filter categories dynamically matching selected transaction type
     const filteredCategories = categories?.filter(
-        (cat) => cat?.type === selectedType && !cat?.isDisabled
+        (cat) => cat?.type === type && !cat?.isDisabled
     ) || [];
 
     // Group categories into Global and Custom
     const globalCategories = filteredCategories?.filter((cat) => cat?.isGlobal) || [];
     const customCategories = filteredCategories?.filter((cat) => !cat?.isGlobal) || [];
 
-    // Populate form on edit / open
-    useEffect(() => {
-        if (isOpen) {
-            if (initialData) {
-                const dateVal = initialData?.transactionDate
-                    ? new Date(initialData.transactionDate)?.toISOString?.()?.slice(0, 10)
-                    : new Date().toISOString().slice(0, 10);
+    const handleTypeChange = (newType) => {
+        setType(newType);
+        // If current category does not belong to new type, clear categoryId
+        const cat = categories?.find((c) => c?.id === categoryId);
+        if (cat && cat.type !== newType) {
+            setCategoryId("");
+        }
+        if (errors.categoryId) {
+            setErrors((prev) => ({ ...prev, categoryId: null }));
+        }
+    };
 
-                reset({
-                    title: initialData?.title || "",
-                    amount: initialData?.amount ? String(initialData.amount) : "",
-                    type: initialData?.type || "EXPENSE",
-                    categoryId: initialData?.categoryId || initialData?.category?.id || "",
-                    transactionDate: dateVal,
-                    notes: initialData.notes || "",
-                });
-            } else {
-                reset({
-                    title: "",
-                    amount: "",
-                    type: "EXPENSE",
-                    categoryId: "",
-                    transactionDate: new Date().toISOString().slice(0, 10),
-                    notes: "",
-                });
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        const newErrors = {};
+
+        const trimmedTitle = title.trim();
+        if (!trimmedTitle) {
+            newErrors.title = "Title is required (max 200 characters)";
+        } else if (trimmedTitle.length > 200) {
+            newErrors.title = "Title cannot exceed 200 characters";
+        }
+
+        const numAmount = parseFloat(amount);
+        if (!amount || isNaN(numAmount) || numAmount <= 0) {
+            newErrors.amount = "Amount must be a positive number greater than 0";
+        } else {
+            const decimals = String(amount).split(".")[1];
+            if (decimals && decimals.length > 2) {
+                newErrors.amount = "Amount can have a maximum of 2 decimal places";
             }
         }
-    }, [isOpen, initialData, reset]);
 
-    // When type changes, verify if the currently selected category belongs to the new type
-    useEffect(() => {
-        if (!isOpen) return;
-        if (selectedCategoryId) {
-            const existsInType = filteredCategories?.some?.((c) => c?.id === selectedCategoryId);
-            if (!existsInType) {
-                setValue("categoryId", "");
-            }
+        if (!transactionDate || isNaN(new Date(transactionDate).getTime())) {
+            newErrors.transactionDate = "Valid transaction date is required";
         }
-    }, [selectedType, filteredCategories, selectedCategoryId, setValue, isOpen]);
 
-    if (!isOpen) return null;
+        if (!categoryId) {
+            newErrors.categoryId = "Please select a category";
+        }
 
-    const handleFormSubmit = async (values) => {
+        if (notes && notes.length > 1000) {
+            newErrors.notes = "Notes cannot exceed 1000 characters";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
         const payload = {
-            title: values?.title?.trim?.() || "",
-            amount: parseFloat(values?.amount),
-            type: values?.type,
-            categoryId: values?.categoryId,
-            transactionDate: values?.transactionDate
-                ? new Date(values.transactionDate).toISOString()
-                : new Date().toISOString(),
-            notes: values?.notes?.trim?.() || "",
+            title: trimmedTitle,
+            amount: numAmount,
+            type,
+            categoryId,
+            transactionDate: new Date(transactionDate).toISOString(),
+            notes: notes.trim(),
         };
+
         await onSubmit?.(payload);
     };
 
@@ -132,7 +158,7 @@ const TransactionModal = ({
                 </div>
 
                 {/* Form Body */}
-                <form onSubmit={handleSubmit(handleFormSubmit)} className="flex-1 overflow-y-auto p-6 space-y-5">
+                <form onSubmit={handleFormSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
                     {/* Transaction Type Segmented Toggle */}
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -141,9 +167,9 @@ const TransactionModal = ({
                         <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl">
                             <button
                                 type="button"
-                                onClick={() => setValue("type", "EXPENSE")}
+                                onClick={() => handleTypeChange("EXPENSE")}
                                 className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
-                                    selectedType === "EXPENSE"
+                                    type === "EXPENSE"
                                         ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
                                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                                 }`}
@@ -153,9 +179,9 @@ const TransactionModal = ({
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setValue("type", "INCOME")}
+                                onClick={() => handleTypeChange("INCOME")}
                                 className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
-                                    selectedType === "INCOME"
+                                    type === "INCOME"
                                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
                                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                                 }`}
@@ -180,14 +206,11 @@ const TransactionModal = ({
                                 type="text"
                                 placeholder="e.g., Grocery store run, Monthly salary"
                                 maxLength={200}
-                                {...register("title", {
-                                    required: "Title is required (max 200 characters)",
-                                    maxLength: {
-                                        value: 200,
-                                        message: "Title is required (max 200 characters)",
-                                    },
-                                    validate: (v) => v.trim().length > 0 || "Title is required (max 200 characters)",
-                                })}
+                                value={title}
+                                onChange={(e) => {
+                                    setTitle(e.target.value);
+                                    if (errors.title) setErrors((prev) => ({ ...prev, title: null }));
+                                }}
                                 className={`w-full text-sm rounded-xl border bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 py-2.5 px-4 transition-all outline-none ${
                                     errors.title
                                         ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
@@ -198,7 +221,7 @@ const TransactionModal = ({
                         {errors.title && (
                             <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
                                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                                <span>{errors.title.message}</span>
+                                <span>{errors.title}</span>
                             </p>
                         )}
                     </div>
@@ -224,27 +247,17 @@ const TransactionModal = ({
                                     min="0.01"
                                     max="999999999.99"
                                     placeholder="0.00"
+                                    value={amount}
+                                    onChange={(e) => {
+                                        setAmount(e.target.value);
+                                        if (errors.amount) setErrors((prev) => ({ ...prev, amount: null }));
+                                    }}
                                     onKeyDown={(e) => {
                                         // Disallow negative sign, exponential 'e'
                                         if (e.key === "-" || e.key === "e" || e.key === "E") {
                                             e.preventDefault();
                                         }
                                     }}
-                                    {...register("amount", {
-                                        required: "Amount must be a positive number greater than 0",
-                                        validate: (val) => {
-                                            const num = parseFloat(val);
-                                            if (isNaN(num) || num <= 0) {
-                                                return "Amount must be a positive number greater than 0";
-                                            }
-                                            // Max 2 decimal places check
-                                            const decimals = String(val).split(".")[1];
-                                            if (decimals && decimals.length > 2) {
-                                                return "Amount can have a maximum of 2 decimal places";
-                                            }
-                                            return true;
-                                        },
-                                    })}
                                     className={`w-full text-sm rounded-xl border bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 py-2.5 pl-10 pr-4 transition-all outline-none ${
                                         errors.amount
                                             ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
@@ -255,7 +268,7 @@ const TransactionModal = ({
                             {errors.amount && (
                                 <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
                                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                                    <span>{errors.amount.message}</span>
+                                    <span>{errors.amount}</span>
                                 </p>
                             )}
                         </div>
@@ -275,10 +288,13 @@ const TransactionModal = ({
                                 <input
                                     id="tx-date"
                                     type="date"
-                                    {...register("transactionDate", {
-                                        required: "Valid transaction date is required",
-                                        validate: (v) => !isNaN(new Date(v).getTime()) || "Valid transaction date is required",
-                                    })}
+                                    value={transactionDate}
+                                    onChange={(e) => {
+                                        setTransactionDate(e.target.value);
+                                        if (errors.transactionDate) {
+                                            setErrors((prev) => ({ ...prev, transactionDate: null }));
+                                        }
+                                    }}
                                     className={`w-full text-sm rounded-xl border bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 py-2.5 pl-10 pr-4 transition-all outline-none ${
                                         errors.transactionDate
                                             ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
@@ -289,7 +305,7 @@ const TransactionModal = ({
                             {errors.transactionDate && (
                                 <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
                                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                                    <span>{errors.transactionDate.message}</span>
+                                    <span>{errors.transactionDate}</span>
                                 </p>
                             )}
                         </div>
@@ -305,7 +321,7 @@ const TransactionModal = ({
                                 Category <span className="text-rose-500">*</span>
                             </span>
                             <span className="text-[11px] font-normal text-slate-400">
-                                Showing {selectedType.toLowerCase()} categories
+                                Showing {type.toLowerCase()} categories
                             </span>
                         </label>
                         <div className="relative flex items-center">
@@ -314,9 +330,13 @@ const TransactionModal = ({
                             </div>
                             <select
                                 id="tx-category"
-                                {...register("categoryId", {
-                                    required: "Please select a category",
-                                })}
+                                value={categoryId}
+                                onChange={(e) => {
+                                    setCategoryId(e.target.value);
+                                    if (errors.categoryId) {
+                                        setErrors((prev) => ({ ...prev, categoryId: null }));
+                                    }
+                                }}
                                 className={`w-full text-sm rounded-xl border bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 py-2.5 pl-10 pr-8 transition-all outline-none appearance-none ${
                                     errors.categoryId
                                         ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
@@ -353,12 +373,12 @@ const TransactionModal = ({
                         {errors.categoryId && (
                             <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
                                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                                <span>{errors.categoryId.message}</span>
+                                <span>{errors.categoryId}</span>
                             </p>
                         )}
                         {filteredCategories.length === 0 && (
                             <p className="text-xs text-amber-500 mt-1">
-                                No {selectedType.toLowerCase()} categories found. Please create one in Categories first.
+                                No {type.toLowerCase()} categories found. Please create one in Categories first.
                             </p>
                         )}
                     </div>
@@ -378,19 +398,22 @@ const TransactionModal = ({
                                 rows={3}
                                 placeholder="Add optional details, tags, or invoice note..."
                                 maxLength={1000}
-                                {...register("notes", {
-                                    maxLength: {
-                                        value: 1000,
-                                        message: "Notes cannot exceed 1000 characters",
-                                    },
-                                })}
-                                className="w-full text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-3 transition-all outline-none hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 resize-none"
+                                value={notes}
+                                onChange={(e) => {
+                                    setNotes(e.target.value);
+                                    if (errors.notes) setErrors((prev) => ({ ...prev, notes: null }));
+                                }}
+                                className={`w-full text-sm rounded-xl border bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-3 transition-all outline-none resize-none ${
+                                    errors.notes
+                                        ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
+                                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                                }`}
                             />
                         </div>
                         {errors.notes && (
                             <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
                                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                                <span>{errors.notes.message}</span>
+                                <span>{errors.notes}</span>
                             </p>
                         )}
                     </div>

@@ -440,6 +440,7 @@ const TransactionsPage = () => {
 
                 {/* Edit Transaction Modal */}
                 <TransactionModal
+                    key={editingTransaction?.id || "edit-tx-modal"}
                     isOpen={Boolean(editingTransaction)}
                     initialData={editingTransaction}
                     onClose={() => setEditingTransaction(null)}
