@@ -6,14 +6,9 @@ import { usePathname } from "next/navigation";
 import {
     Menu,
     Wallet,
-    Plus,
     Bell,
-    User,
-    Sparkles,
-    Shield,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import Button from "@/components/ui/Button";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const PAGE_TITLES = {
@@ -30,6 +25,7 @@ const PAGE_TITLES = {
 const Header = ({
     onOpenMobileSidebar = () => {},
     onQuickAddClick,
+    onNotificationsClick,
 }) => {
     const pathname = usePathname();
     const { user } = useAuth();
@@ -85,17 +81,18 @@ const Header = ({
 
                 {/* Right: Quick Action, Theme Toggle & User Profile Info */}
                 <div className="flex items-center gap-2 sm:gap-3">
-                    {/* Quick Add Button */}
-                    <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={onQuickAddClick}
-                        icon={Plus}
-                        className="text-xs font-semibold py-2 px-3 shadow-emerald-500/20"
+                    {/* Notification Icon */}
+                    <button
+                        type="button"
+                        onClick={() => onNotificationsClick?.()}
+                        aria-label="Notifications"
+                        title="Notifications"
+                        className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 select-none outline-none focus:ring-2 focus:ring-emerald-500/30 border border-slate-200/90 dark:border-slate-800 bg-white hover:bg-emerald-50/70 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 shadow-xs dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-emerald-400 dark:hover:border-slate-700"
                     >
-                        <span className="hidden sm:inline">Add Transaction</span>
-                        <span className="sm:hidden">Add</span>
-                    </Button>
+                        <Bell className="w-4 h-4" />
+                        <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+                        <span className="sr-only">Notifications</span>
+                    </button>
 
                     {/* Dark & Light Theme Toggle */}
                     <ThemeToggle />
